@@ -11,12 +11,12 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3001",
-        description: "Local server",
-      },
-      {
         url: "https://travel-stories-backend.onrender.com",
         description: "Production server",
+      },
+      {
+        url: "http://localhost:3001",
+        description: "Local server",
       },
     ],
     tags: [
