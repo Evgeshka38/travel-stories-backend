@@ -1,0 +1,37 @@
+import { storiesService } from '../../services/index.js';
+import { isValidObjectId } from 'mongoose';
+
+export const updateStory = async (req, res) => {
+  const { storyId } = req.params;
+  if (!isValidObjectId(storyId)) {
+    return res.status(400).json({
+      status: 400,
+      message: 'Invalid story ID',
+    });
+  }
+
+  const { img, title, article, category, date } = req.body;
+
+  const updateData = { img, title, article, category, date };
+
+  Object.keys(updateData).forEach(key => {
+    if (updateData[key] === undefined) {
+      delete updateData[key];
+    }
+  });
+
+  const story = await storiesService.updateStory(storyId, updateData);
+
+  if (!story) {
+    return res.status(404).json({
+      status: 404,
+      message: 'Story not found',
+    });
+  }
+
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully updated a story!',
+    data: story,
+  });
+};
