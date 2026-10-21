@@ -1,0 +1,14 @@
+components:
+  schemas:
+    Category:
+      type: object
+      required:
+        - _id
+        - name
+      properties:
+        _id:
+          type: string
+          example: 68fb50c80ae91338641121f0
+        name:
+          type: string
+          example: Азія
