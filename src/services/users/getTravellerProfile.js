@@ -20,7 +20,7 @@ export const getTravellerProfileService = async (id, query) => {
   const stories = await Story.find({ ownerId: id })
     .skip(skip)
     .limit(limit)
-    .sort({ createdAt: -1 });
+    .sort({ date: -1 });
 
   return {
     traveller,
