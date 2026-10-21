@@ -26,7 +26,7 @@ const storySchema = new Schema(
       required: true,
     },
     date: {
-      type: String, 
+      type: String,
     },
     favoriteCount: {
       type: Number,
@@ -36,7 +36,7 @@ const storySchema = new Schema(
   {
     timestamps: true,
     versionKey: false,
-  },
+  }
 );
 
-export const Story = mongoose.model("Story", storySchema);
+export const Story = model('Story', storySchema);
