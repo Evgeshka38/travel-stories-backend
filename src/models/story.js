@@ -10,12 +10,12 @@ const storySchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      maxlength: 80,
+      maxLength: 80,
     },
     article: {
       type: String,
       required: true,
-      maxlength: 2500,
+      maxLength: 2500,
     },
     category: {
       type: Schema.Types.ObjectId,

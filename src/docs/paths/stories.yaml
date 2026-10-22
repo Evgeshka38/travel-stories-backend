@@ -1,0 +1,227 @@
+paths:
+  /api/stories:
+    post:
+      tags:
+        - Stories
+      summary: Create a story
+      description: Creates a new story for the authenticated user.
+      operationId: createStory
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - img
+                - title
+                - article
+                - category
+                - date
+              properties:
+                img:
+                  type: string
+                  format: uri
+                  example: https://example.com/story-image.jpg
+                title:
+                  type: string
+                  maxLength: 80
+                  example: "Сванетія: серед веж і гірських легенд"
+                article:
+                  type: string
+                  maxLength: 2500
+                  example: Подорож до Сванетії залишила незабутні враження...
+                category:
+                  type: string
+                  example: 68fb50c80ae91338641121f8
+                date:
+                  type: string
+                  format: date
+                  example: "2026-10-22"
+
+      responses:
+        "201":
+          description: Successfully created a story
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                  - data
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: Successfully created a story!
+                  data:
+                    $ref: "#/components/schemas/Story"
+
+        "400":
+          description: Invalid request data
+
+        "401":
+          description: Unauthorized
+
+        "500":
+          description: Internal server error
+
+  /api/stories/popular:
+    get:
+      tags:
+        - Stories
+      summary: Get popular stories
+      description: Returns a paginated list of stories sorted by favorite count in descending order.
+      operationId: getPopularStories
+
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+
+        - name: perPage
+          in: query
+          required: false
+          description: Number of stories per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+            default: 3
+
+      responses:
+        "200":
+          description: Successfully found popular stories
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                  - data
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Successfully found popular stories
+                  data:
+                    type: object
+                    required:
+                      - stories
+                      - page
+                      - perPage
+                      - totalItems
+                      - hasNextPage
+                    properties:
+                      stories:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Story"
+                      page:
+                        type: integer
+                        example: 1
+                      perPage:
+                        type: integer
+                        example: 3
+                      totalItems:
+                        type: integer
+                        example: 24
+                      hasNextPage:
+                        type: boolean
+                        example: true
+
+        "400":
+          description: Invalid query parameters
+
+        "500":
+          description: Internal server error
+
+  /api/stories/{storyId}:
+    patch:
+      tags:
+        - Stories
+      summary: Update a story
+      description: Updates a story owned by the authenticated user.
+      operationId: updateStory
+
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          description: Story MongoDB ObjectId
+          schema:
+            type: string
+            example: 68498236a100312bea079008
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                img:
+                  type: string
+                  format: uri
+                  example: https://example.com/story-image.jpg
+                title:
+                  type: string
+                  maxLength: 80
+                  example: Оновлена назва історії
+                article:
+                  type: string
+                  maxLength: 2500
+                  example: Оновлений текст історії...
+                category:
+                  type: string
+                  example: 68fb50c80ae91338641121f8
+                date:
+                  type: string
+                  format: date
+                  example: "2026-10-22"
+
+      responses:
+        "200":
+          description: Successfully updated a story
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                  - data
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Successfully updated a story!
+                  data:
+                    $ref: "#/components/schemas/Story"
+
+        "400":
+          description: Invalid request data or story ID
+
+        "401":
+          description: Unauthorized
+
+        "404":
+          description: Story not found or does not belong to the current user
+
+        "500":
+          description: Internal server error

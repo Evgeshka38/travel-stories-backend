@@ -1,7 +1,11 @@
+import { loginUser } from "./auth/loginUser.js";
 import { getCategories } from "./categories/getCategories.js";
+import { createStory } from "./stories/createStory.js";
+import { updateStory } from "./stories/updateStory.js";
 import { getStories } from "./stories/getStories.js";
-import { getTravellerProfile } from "./users/userController.js";
-import { getAllUsers } from "./users/userController.js";
+import { getPopularStories } from "./stories/getPopularStories.js";
+import { updateUser } from "./users/updateUser.js";
+import { getTravellerProfile, getAllUsers } from "./users/userController.js";
 
 export const categoriesController = {
   getCategories,
@@ -9,9 +13,17 @@ export const categoriesController = {
 
 export const storiesController = {
   getStories,
+  createStory,
+  updateStory,
+  getPopularStories,
 };
 
 export const usersController = {
   getTravellerProfile,
   getAllUsers,
+  updateUser,
+};
+
+export const authController = {
+  loginUser,
 };

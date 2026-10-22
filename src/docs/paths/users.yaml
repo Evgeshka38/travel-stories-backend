@@ -77,6 +77,72 @@ paths:
         "500":
           description: Internal server error
 
+    patch:
+      tags:
+        - Users
+      summary: Update current user profile
+      description: Updates profile data of the authenticated user.
+      operationId: updateUser
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 32
+                  example: "Дмитро Романенко"
+                email:
+                  type: string
+                  format: email
+                  maxLength: 64
+                  example: "dmytro@example.com"
+                description:
+                  type: string
+                  maxLength: 150
+                  example: "Люблю подорожувати та ділитися історіями."
+
+      responses:
+        "200":
+          description: Successfully updated user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                  - data
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Successfully updated user profile
+                  data:
+                    $ref: "#/components/schemas/User"
+
+        "400":
+          description: Invalid request data
+
+        "401":
+          description: Unauthorized
+
+        "404":
+          description: User not found
+
+        "409":
+          description: A user with this email already exists
+
+        "500":
+          description: Internal server error
+
   /api/users/{id}:
     get:
       tags:
