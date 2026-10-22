@@ -5,7 +5,7 @@ import {
 } from "../../constants/timeConstants.js";
 import { Session } from "../../models/session.js";
 
-export const createSession = async (userId) => {
+export const createSession = (userId) => {
   const accessToken = crypto.randomUUID();
   const refreshToken = crypto.randomUUID();
 
