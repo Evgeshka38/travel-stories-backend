@@ -9,3 +9,10 @@ export const getTravellerProfileSchema = {
     limit: Joi.number().integer().min(1).max(50).default(6),
   }),
 };
+
+export const registerUserSchema = {
+  [Segments.BODY]: Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+};
