@@ -1,3 +1,4 @@
+import { loginUser } from "./auth/loginUser.js";
 import { getCategories } from "./categories/getCategories.js";
 import { createStory } from "./stories/createStory.js";
 import { updateStory } from "./stories/updateStory.js";
@@ -15,4 +16,8 @@ export const storiesController = {
 export const usersController = {
   getTravellerProfile,
   getAllUsers,
+};
+
+export const authController = {
+  loginUser,
 };
