@@ -7,13 +7,24 @@ const userSchema = new Schema(
       required: true,
       trim: true,
     },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
     avatarUrl: {
       type: String,
-      default: 'https://ac.goit.global/fullstack/react/default-avatar.jpg',
+      default: "https://ac.goit.global/fullstack/react/default-avatar.jpg",
     },
     description: {
       type: String,
-      default: '',
+      trim: true,
+      default: "",
     },
     articlesAmount: {
       type: Number,
@@ -25,4 +36,12 @@ const userSchema = new Schema(
     versionKey: false,
   },
 );
+
+userSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
+
 export const User = model("User", userSchema);
+
