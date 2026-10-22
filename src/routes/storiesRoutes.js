@@ -1,18 +1,49 @@
 import { Router } from "express";
 import { celebrate } from "celebrate";
 import { storiesController } from "../controllers/index.js";
-import { getOwnStoriesSchema } from "../validations/storyValidation.js";
-import { authenticate } from "../middlewares/authenticate.js";
+import {
+  getStoriesSchema,
+  getOwnStoriesSchema,
+  storyBodySchema,
+  updateStoryBodySchema,
+  getPopularStoriesSchema,
+} from "../validations/storiesValidation.js";
 import { ctrlWrapper } from "../utils/index.js";
+import { authenticate } from "../middlewares/authenticate.js";
 
 const router = Router();
 
-// мій /own має бути вище за /:storyId (щоб динамічний маршрут його не перехопив)
+router.get(
+  "/",
+  celebrate(getStoriesSchema),
+  ctrlWrapper(storiesController.getStories),
+);
+
 router.get(
   "/own",
   authenticate,
   celebrate(getOwnStoriesSchema),
   ctrlWrapper(storiesController.getOwnStories),
+);
+
+router.get(
+  "/popular",
+  celebrate(getPopularStoriesSchema),
+  ctrlWrapper(storiesController.getPopularStories),
+);
+
+router.post(
+  "/",
+  authenticate,
+  celebrate(storyBodySchema),
+  ctrlWrapper(storiesController.createStory),
+);
+
+router.patch(
+  "/:storyId",
+  authenticate,
+  celebrate(updateStoryBodySchema),
+  ctrlWrapper(storiesController.updateStory),
 );
 
 export default router;

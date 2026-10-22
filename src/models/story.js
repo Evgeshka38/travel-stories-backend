@@ -10,27 +10,31 @@ const storySchema = new Schema(
       type: String,
       required: true,
       trim: true,
+      maxLength: 80,
     },
     article: {
       type: String,
       required: true,
+      maxLength: 2500,
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref: 'Category',
+      ref: "Category",
       required: true,
     },
     ownerId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     date: {
-      type: String, 
+      type: String,
+      required: true,
     },
     favoriteCount: {
       type: Number,
       default: 0,
+      min: 0,
     },
   },
   {
@@ -38,5 +42,7 @@ const storySchema = new Schema(
     versionKey: false,
   },
 );
+
+storySchema.index({ category: 1, date: -1 });
 
 export const Story = model("Story", storySchema);
