@@ -3,6 +3,7 @@ import { celebrate } from "celebrate";
 import { storiesController } from "../controllers/index.js";
 import {
   getStoriesSchema,
+  getOwnStoriesSchema,
   storyBodySchema,
   updateStoryBodySchema,
   getPopularStoriesSchema,
@@ -18,6 +19,19 @@ router.get(
   ctrlWrapper(storiesController.getStories),
 );
 
+router.get(
+  "/own",
+  authenticate,
+  celebrate(getOwnStoriesSchema),
+  ctrlWrapper(storiesController.getOwnStories),
+);
+
+router.get(
+  "/popular",
+  celebrate(getPopularStoriesSchema),
+  ctrlWrapper(storiesController.getPopularStories),
+);
+
 router.post(
   "/",
   authenticate,
@@ -30,12 +44,6 @@ router.patch(
   authenticate,
   celebrate(updateStoryBodySchema),
   ctrlWrapper(storiesController.updateStory),
-);
-
-router.get(
-  "/popular",
-  celebrate(getPopularStoriesSchema),
-  ctrlWrapper(storiesController.getPopularStories),
 );
 
 export default router;
