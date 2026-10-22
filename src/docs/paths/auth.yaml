@@ -1,0 +1,56 @@
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login user
+      description: Authenticates a user by email and password, creates a new session and sets session cookies.
+      operationId: loginUser
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                password:
+                  type: string
+                  example: "password123"
+
+      responses:
+        "200":
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                  - data
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Successful login"
+                  data:
+                    $ref: "#/components/schemas/User"
+
+        "400":
+          description: Invalid request data
+
+        "401":
+          description: Invalid email or password
+
+        "500":
+          description: Internal server error
