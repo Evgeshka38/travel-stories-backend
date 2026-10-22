@@ -1,12 +1,12 @@
 import createHttpError from "http-errors";
-import { User } from "../../models/user";
+import { User } from "../../models/user.js";
 import bcrypt from "bcrypt";
-import { PASSWORD_HASH_SALT } from "../../constants/authConstants";
-import { createSession } from "../../services/auth/createSession";
-import { setSessionCookies } from "../../services/auth/setSessionCookies";
+import { PASSWORD_HASH_SALT } from "../../constants/authConstants.js";
+import { createSession } from "../../services/auth/createSession.js";
+import { setSessionCookies } from "../../services/auth/setSessionCookies.js";
 
 export const registerUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
   const existingUser = await User.findOne({ email });
 
@@ -14,8 +14,9 @@ export const registerUser = async (req, res) => {
     throw createHttpError(409, "A user with this email is already registered");
   }
   const hashedPassword = await bcrypt.hash(password, PASSWORD_HASH_SALT);
-  
+
   const newUser = await User.create({
+    name,
     email,
     password: hashedPassword,
   });

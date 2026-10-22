@@ -12,6 +12,9 @@ import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { swaggerSpec } from "./docs/swagger.js";
 
+import authRoutes from "./routes/authRoutes.js";
+
+
 dotenv.config();
 
 const app = express();
@@ -38,6 +41,7 @@ app.use("/api", apiRouter);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+app.use(authRoutes);
 app.use(notFoundHandler);
 app.use(errors());
 app.use(errorHandler);
