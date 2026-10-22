@@ -1,4 +1,67 @@
 paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register user
+      description: Creates a new user account, creates a session and sets session cookies.
+      operationId: registerUser
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  example: "Дмитро Романенко"
+                email:
+                  type: string
+                  format: email
+                  example: "dmytro@example.com"
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 128
+                  example: "password123"
+
+      responses:
+        "201":
+          description: Successfully registered a user
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                  - data
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: "Successfully registered a user"
+                  data:
+                    $ref: "#/components/schemas/User"
+
+        "400":
+          description: Invalid request data
+
+        "409":
+          description: A user with this email is already registered
+
+        "500":
+          description: Internal server error
+
   /api/auth/login:
     post:
       tags:
