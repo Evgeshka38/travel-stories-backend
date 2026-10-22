@@ -10,4 +10,13 @@ router.post(
   celebrate(registerUserSchema),
   ctrlWrapper(registerUser),
 );
+import { authValidation } from "../validations/index.js";
+import { authController } from "../controllers/index.js";
+
+router.post(
+  "/login",
+  celebrate(authValidation.loginUserSchema),
+  ctrlWrapper(authController.loginUser),
+);
+
 export default router;

@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
 const storySchema = new Schema(
   {
@@ -26,7 +26,7 @@ const storySchema = new Schema(
       required: true,
     },
     date: {
-      type: String, 
+      type: String,
     },
     favoriteCount: {
       type: Number,
@@ -36,7 +36,7 @@ const storySchema = new Schema(
   {
     timestamps: true,
     versionKey: false,
-  },
+  }
 );
 
-export const Story = model("Story", storySchema);
+export const Story = model('Story', storySchema);
