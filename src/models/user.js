@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
   {
     name: {
       type: String,
@@ -17,19 +17,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
-    avatar: {
+    avatarUrl: {
       type: String,
-      required: false,
       default: "https://ac.goit.global/fullstack/react/default-avatar.jpg",
     },
     description: {
       type: String,
-      required: false,
       trim: true,
       default: "",
     },
-
     articlesAmount: {
       type: Number,
       default: 0,
@@ -47,4 +43,4 @@ userSchema.methods.toJSON = function () {
   return obj;
 };
 
-export const User = mongoose.model("User", userSchema);
+export const User = model("User", userSchema);
