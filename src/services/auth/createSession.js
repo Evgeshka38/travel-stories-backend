@@ -2,7 +2,7 @@ import crypto from "crypto";
 import {
   DAY_IN_MILLISECONDS,
   MINUTE_IN_MILLISECONDS,
-} from "../constants/time.js";
+} from "../../constants/timeConstants.js";
 import { Session } from "../../models/session.js";
 
 export const createSession = async (userId) => {
