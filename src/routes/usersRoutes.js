@@ -1,9 +1,13 @@
-import { Router } from "express";
-import { celebrate } from "celebrate";
-import { usersController } from "../controllers/index.js";
-import { getTravellerProfileSchema } from "../validations/userValidation.js";
-import { ctrlWrapper } from "../utils/index.js";
-import { getAllUsersSchema } from "../validations/userValidation.js"
+import { Router } from 'express';
+import { celebrate } from 'celebrate';
+import { usersController } from '../controllers/index.js';
+import {
+  getTravellerProfileSchema,
+  updateUserSchema,
+  getAllUsersSchema,
+} from '../validations/userValidation.js';
+import { ctrlWrapper } from '../utils/index.js';
+import { authenticate } from '../middlewares/authenticate.js';
 
 const router = Router();
 
@@ -14,9 +18,22 @@ router.get(
 );
 
 router.get(
-  "/", 
-  celebrate(getAllUsersSchema), 
-  ctrlWrapper(usersController.getAllUsers),
+  '/',
+  celebrate(getAllUsersSchema),
+  ctrlWrapper(usersController.getAllUsers)
+);
+
+router.patch(
+  '/',
+  authenticate,
+  celebrate(updateUserSchema),
+  ctrlWrapper(usersController.updateUser)
+);
+
+router.get(
+  "/me",
+  authenticate,
+  ctrlWrapper(usersController.getCurrentUser),
 );
 
 export default router;
