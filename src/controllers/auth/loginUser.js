@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { User, Session } from "../../models/index.js";
 import { authService } from "../../services/index.js";
+import createHttpError from "http-errors";
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
