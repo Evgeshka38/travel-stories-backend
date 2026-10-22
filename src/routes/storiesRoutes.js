@@ -7,15 +7,18 @@ import {
   storyBodySchema,
   updateStoryBodySchema,
 } from '../validations/storyValidation.js';
+import { authenticate } from '../middlewares/authenticate.js';
 
 const router = Router();
 router.post(
   '/',
+  authenticate,
   celebrate(storyBodySchema),
   ctrlWrapper(storiesController.createStory)
 );
 router.patch(
   '/:storyId',
+  authenticate,
   celebrate(updateStoryBodySchema),
   ctrlWrapper(storiesController.updateStory)
 );

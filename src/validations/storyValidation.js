@@ -8,7 +8,6 @@ export const storyBodySchema = {
     title: Joi.string().trim().min(1).max(80).required(),
     article: Joi.string().trim().min(1).max(2500).required(),
     category: Joi.string().pattern(objectIdPattern).required(),
-    ownerId: Joi.string().pattern(objectIdPattern).required(),
     date: Joi.string().isoDate().optional(),
   }),
 };

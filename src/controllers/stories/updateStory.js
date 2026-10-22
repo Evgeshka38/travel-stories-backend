@@ -12,7 +12,11 @@ export const updateStory = async (req, res) => {
     }
   });
 
-  const story = await storiesService.updateStory(storyId, updateData);
+  const story = await storiesService.updateStory(
+    storyId,
+    updateData,
+    req.user._id
+  );
 
   if (!story) {
     return res.status(404).json({
