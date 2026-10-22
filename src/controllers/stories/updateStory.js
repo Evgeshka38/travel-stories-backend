@@ -1,15 +1,7 @@
 import { storiesService } from '../../services/index.js';
-import { isValidObjectId } from 'mongoose';
 
 export const updateStory = async (req, res) => {
   const { storyId } = req.params;
-  if (!isValidObjectId(storyId)) {
-    return res.status(400).json({
-      status: 400,
-      message: 'Invalid story ID',
-    });
-  }
-
   const { img, title, article, category, date } = req.body;
 
   const updateData = { img, title, article, category, date };
