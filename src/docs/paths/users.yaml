@@ -3,14 +3,15 @@ paths:
     get:
       tags:
         - Users
-      summary: Get all travellers
-      description: Returns a paginated list of travellers.
+      summary: Get all users
+      description: Returns a paginated list of users.
       operationId: getAllUsers
 
       parameters:
         - name: page
           in: query
           required: false
+          description: Page number
           schema:
             type: integer
             minimum: 1
@@ -19,6 +20,7 @@ paths:
         - name: limit
           in: query
           required: false
+          description: Number of users per page
           schema:
             type: integer
             minimum: 1
@@ -27,20 +29,30 @@ paths:
 
       responses:
         "200":
-          description: Successfully found travellers
+          description: Successfully found users
           content:
             application/json:
               schema:
                 type: object
+                required:
+                  - status
+                  - message
+                  - data
                 properties:
                   status:
                     type: integer
                     example: 200
                   message:
                     type: string
-                    example: Successfully found travellers
+                    example: Successfully found users
                   data:
                     type: object
+                    required:
+                      - users
+                      - page
+                      - perPage
+                      - totalItems
+                      - hasNextPage
                     properties:
                       users:
                         type: array
@@ -54,14 +66,17 @@ paths:
                         example: 12
                       totalItems:
                         type: integer
-                        example: 50
+                        example: 24
                       hasNextPage:
                         type: boolean
                         example: true
 
+        "400":
+          description: Invalid query parameters
+
         "500":
           description: Internal server error
-  
+
   /api/users/{id}:
     get:
       tags:
