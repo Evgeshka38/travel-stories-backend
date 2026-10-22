@@ -1,7 +1,6 @@
-import mongoose from "mongoose";
 import { Schema, model } from "mongoose";
 
-const storySchema = new mongoose.Schema(
+const storySchema = new Schema(
   {
     img: {
       type: String,
@@ -11,31 +10,27 @@ const storySchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      maxlength: 80,
     },
     article: {
       type: String,
       required: true,
-      maxlength: 2500,
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref: "Category",
+      ref: 'Category',
       required: true,
     },
     ownerId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     date: {
-      type: String,
-      required: true,
+      type: String, 
     },
     favoriteCount: {
       type: Number,
       default: 0,
-      min: 0,
     },
   },
   {
@@ -44,6 +39,4 @@ const storySchema = new mongoose.Schema(
   },
 );
 
-storySchema.index({ category: 1, date: -1 });
-
-export const Story = mongoose.model("Story", storySchema);
+export const Story = model("Story", storySchema);

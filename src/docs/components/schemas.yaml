@@ -12,3 +12,65 @@ components:
         name:
           type: string
           example: Азія
+
+    User:
+      type: object
+      required:
+        - _id
+        - name
+        - avatarUrl
+        - description
+        - articlesAmount
+      properties:
+        _id:
+          type: string
+          example: 6881563901add19ee16fd012
+        name:
+          type: string
+          example: Матвій Мельник
+        avatarUrl:
+          type: string
+          format: uri
+          example: https://ftp.goit.study/img/travel-blog/6881563901add19ee16fd012.webp
+        description:
+          type: string
+          example: Я Матвій. Шукаю натхнення у кожній поїздці.
+        articlesAmount:
+          type: integer
+          example: 3
+
+    Story:
+      type: object
+      required:
+        - _id
+        - img
+        - title
+        - article
+        - category
+        - ownerId
+      properties:
+        _id:
+          type: string
+          example: 68498236a100312bea079008
+        img:
+          type: string
+          format: uri
+          example: https://ftp.goit.study/img/travel-blog/68498236a100312bea079008.webp
+        title:
+          type: string
+          example: "Йорданія: шлях у Петру"
+        article:
+          type: string
+          example: Петра — одне з нових чудес світу...
+        category:
+          type: string
+          example: 68fb50c80ae91338641121f0
+        ownerId:
+          type: string
+          example: 6881563901add19ee16fd012
+        date:
+          type: string
+          example: "2025-01-10"
+        favoriteCount:
+          type: integer
+          example: 4
