@@ -1,10 +1,29 @@
 import { Router } from "express";
 import { celebrate } from "celebrate";
 import { storiesController } from "../controllers/index.js";
-import { getPopularStoriesSchema } from "../validations/storyValidation.js";
+import {
+  storyBodySchema,
+  updateStoryBodySchema,
+  getPopularStoriesSchema,
+} from "../validations/storyValidation.js";
 import { ctrlWrapper } from "../utils/index.js";
+import { authenticate } from "../middlewares/authenticate.js";
 
 const router = Router();
+
+router.post(
+  "/",
+  authenticate,
+  celebrate(storyBodySchema),
+  ctrlWrapper(storiesController.createStory),
+);
+
+router.patch(
+  "/:storyId",
+  authenticate,
+  celebrate(updateStoryBodySchema),
+  ctrlWrapper(storiesController.updateStory),
+);
 
 router.get(
   "/popular",
