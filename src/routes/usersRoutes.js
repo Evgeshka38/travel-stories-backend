@@ -2,7 +2,7 @@ import { Router } from "express";
 import { celebrate } from "celebrate";
 import { usersController } from "../controllers/index.js";
 import { getTravellerProfileSchema } from "../validations/userValidation.js";
-import { ctrlWrapper } from "../middlewares/ctrlWrapper.js";
+import { ctrlWrapper } from "../utils/index.js";
 
 const router = Router();
 
