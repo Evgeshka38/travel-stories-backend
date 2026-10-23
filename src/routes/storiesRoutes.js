@@ -50,15 +50,9 @@ router.patch(
 router.patch(
   "/favorite/add/:storyId",
   authenticate,
-  celebrate(),
   ctrlWrapper(addFavoriteStory),
 );
 
-router.patch(
-  "/favorites/remove/:storyId",
-  authenticate,
-  celebrate(),
-  ctrlWrapper(),
-);
+router.patch("/favorites/remove/:storyId", authenticate, ctrlWrapper());
 
 export default router;
