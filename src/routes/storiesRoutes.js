@@ -30,6 +30,13 @@ router.get(
 );
 
 router.get(
+  "/saved",
+  authenticate,
+  celebrate(getOwnStoriesSchema),
+  ctrlWrapper(storiesController.getSavedStories),
+);
+
+router.get(
   "/popular",
   celebrate(getPopularStoriesSchema),
   ctrlWrapper(storiesController.getPopularStories),
