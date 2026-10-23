@@ -1,5 +1,5 @@
-import createHttpErrorfrom from "http-errors";
-import { User } from "../../models/user"
+import createHttpError from "http-errors";
+import { User } from "../../models/user.js"
 
 export const getCurrentUserService = async (userId) => {
     const user = await User.findById(userId).select("nave avatarUrl description articlesAmount",);

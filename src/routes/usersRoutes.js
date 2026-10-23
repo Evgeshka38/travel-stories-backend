@@ -12,9 +12,9 @@ import { authenticate } from '../middlewares/authenticate.js';
 const router = Router();
 
 router.get(
-  "/:id",
-  celebrate(getTravellerProfileSchema),
-  ctrlWrapper(usersController.getTravellerProfile),
+  "/me",
+  authenticate,
+  ctrlWrapper(usersController.getCurrentUser),
 );
 
 router.get(
@@ -31,9 +31,9 @@ router.patch(
 );
 
 router.get(
-  "/me",
-  authenticate,
-  ctrlWrapper(usersController.getCurrentUser),
+  "/:id",
+  celebrate(getTravellerProfileSchema),
+  ctrlWrapper(usersController.getTravellerProfile),
 );
 
 export default router;
