@@ -1,4 +1,4 @@
-import { Joi, Segments } from 'celebrate';
+import { Joi, Segments } from "celebrate";
 
 export const getTravellerProfileSchema = {
   [Segments.PARAMS]: Joi.object().keys({
