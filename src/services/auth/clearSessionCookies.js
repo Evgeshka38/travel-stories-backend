@@ -1,19 +1,7 @@
+import { SESSION_COOKIE_OPTIONS } from "../../constants/cookiesOptions.js";
+
 export const clearSessionCookies = (res) => {
-  res.clearCookie("sessionId", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  });
-
-  res.clearCookie("accessToken", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  });
-
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  });
+  res.clearCookie("sessionId", SESSION_COOKIE_OPTIONS);
+  res.clearCookie("accessToken", SESSION_COOKIE_OPTIONS);
+  res.clearCookie("refreshToken", SESSION_COOKIE_OPTIONS);
 };
