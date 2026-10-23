@@ -8,6 +8,7 @@ import { getStory } from "./stories/getStory.js";
 import { updateUserService } from "./users/updateUser.js";
 import { getTravellerProfileService } from "./users/getTravellerProfile.js";
 import { getAllUsersService } from "./users/getAllUsers.js";
+import { clearSessionCookies } from "./auth/clearSessionCookies.js";
 
 export const categoriesService = {
   getCategories,
@@ -23,6 +24,7 @@ export const storiesService = {
 export const authService = {
   createSession,
   setSessionCookies,
+  clearSessionCookies,
 };
 
 export const usersService = {
