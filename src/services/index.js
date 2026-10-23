@@ -1,8 +1,9 @@
-import { getCategories } from './categories/getCategories.js';
-import { createStory } from './stories/createStory.js';
-import { updateStory } from './stories/updateStory.js';
-import { createSession } from './auth/createSession.js';
-import { setSessionCookies } from './auth/setSessionCookies.js';
+import { getCategories } from "./categories/getCategories.js";
+import { getStories } from "./stories/getStories.js";
+import { createStory } from "./stories/createStory.js";
+import { updateStory } from "./stories/updateStory.js";
+import { createSession } from "./auth/createSession.js";
+import { setSessionCookies } from "./auth/setSessionCookies.js";
 import { clearSessionCookies } from "./auth/clearSessionCookies.js";
 
 export const categoriesService = {
@@ -10,6 +11,7 @@ export const categoriesService = {
 };
 
 export const storiesService = {
+  getStories,
   createStory,
   updateStory,
 };
