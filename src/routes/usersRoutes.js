@@ -1,13 +1,15 @@
-import { Router } from 'express';
-import { celebrate } from 'celebrate';
-import { usersController } from '../controllers/index.js';
+import { Router } from "express";
+import { celebrate } from "celebrate";
+import { usersController } from "../controllers/index.js";
 import {
   getTravellerProfileSchema,
   updateUserSchema,
   getAllUsersSchema,
-} from '../validations/userValidation.js';
-import { ctrlWrapper } from '../utils/index.js';
-import { authenticate } from '../middlewares/authenticate.js';
+} from "../validations/userValidation.js";
+import { ctrlWrapper } from "../utils/index.js";
+import { authenticate } from "../middlewares/authenticate.js";
+import { updateUserAvatar } from "../controllers/users/userController.js";
+import { upload } from "../middlewares/multer.js";
 
 const router = Router();
 
@@ -18,16 +20,23 @@ router.get(
 );
 
 router.get(
-  '/',
+  "/",
   celebrate(getAllUsersSchema),
-  ctrlWrapper(usersController.getAllUsers)
+  ctrlWrapper(usersController.getAllUsers),
 );
 
 router.patch(
-  '/',
+  "/",
   authenticate,
   celebrate(updateUserSchema),
-  ctrlWrapper(usersController.updateUser)
+  ctrlWrapper(usersController.updateUser),
+);
+
+router.patch(
+  "/avatar",
+  authenticate,
+  upload.single("avatar"),
+  ctrlWrapper(updateUserAvatar),
 );
 
 router.get(
