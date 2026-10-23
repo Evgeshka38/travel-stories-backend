@@ -170,6 +170,7 @@ paths:
       summary: Get own stories
       description: Returns a paginated list of stories created by the authenticated user.
       operationId: getOwnStories
+
       security:
         - cookieAuth: []
 
@@ -320,6 +321,128 @@ paths:
 
         "400":
           description: Invalid query parameters
+
+        "500":
+          description: Internal server error
+
+  /api/stories/favorite/add/{storyId}:
+    patch:
+      tags:
+        - Stories
+      summary: Add story to favorites
+      description: Adds a story to the authenticated user's favorites and increases its favorite count.
+      operationId: addFavoriteStory
+
+      security:
+        - cookieAuth: []
+
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          description: Story MongoDB ObjectId
+          schema:
+            type: string
+            example: 68498236a100312bea079008
+
+      responses:
+        "200":
+          description: Story added to favorites or already exists in favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                  - data
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Story added to favorites
+                  data:
+                    type: object
+                    required:
+                      - user
+                      - story
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+                      story:
+                        $ref: "#/components/schemas/Story"
+
+        "400":
+          description: Invalid story ID
+
+        "401":
+          description: Unauthorized
+
+        "404":
+          description: Story not found
+
+        "500":
+          description: Internal server error
+
+  /api/stories/favorite/remove/{storyId}:
+    patch:
+      tags:
+        - Stories
+      summary: Remove story from favorites
+      description: Removes a story from the authenticated user's favorites and decreases its favorite count.
+      operationId: removeFavoriteStory
+
+      security:
+        - cookieAuth: []
+
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          description: Story MongoDB ObjectId
+          schema:
+            type: string
+            example: 68498236a100312bea079008
+
+      responses:
+        "200":
+          description: Story removed from favorites or was not present in favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                  - data
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Story removed from favorites
+                  data:
+                    type: object
+                    required:
+                      - user
+                      - story
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+                      story:
+                        $ref: "#/components/schemas/Story"
+
+        "400":
+          description: Invalid story ID
+
+        "401":
+          description: Unauthorized
+
+        "404":
+          description: Story not found
 
         "500":
           description: Internal server error
