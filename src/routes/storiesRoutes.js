@@ -57,7 +57,7 @@ router.patch(
 );
 
 router.patch(
-  "/favorites/remove/:storyId",
+  "/favorite/remove/:storyId",
   authenticate,
   celebrate(storyIdSchema),
   ctrlWrapper(removeFavoriteStory),
