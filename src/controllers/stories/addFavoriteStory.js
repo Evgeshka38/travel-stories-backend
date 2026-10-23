@@ -39,10 +39,34 @@ export const addFavoriteStory = async (req, res) => {
     favorites: [...req.user.favorites, storyId],
   };
 
-  const updatedUser = await updateUserService(req.user.id, updateUserData);
+  let updatedUser;
 
-  if (!updatedUser)
-    throw createHttpError(500, "Failed to add story to favorites");
+  try {
+    updatedUser = await updateUserService(req.user.id, updateUserData);
+
+    if (!updatedUser) {
+      throw createHttpError(500, "Failed to update user favorites");
+    }
+  } catch (error) {
+    try {
+      const restoredStory = await storiesService.updateStory(
+        storyId,
+        { favoriteCount: updatedStory.favoriteCount - 1 },
+        story.ownerId,
+      );
+
+      if (!restoredStory) {
+        throw createHttpError(500, "Failed to restore story favorite count");
+      }
+    } catch {
+      throw createHttpError(
+        500,
+        "Failed to add story to favorites and restore story favorite count",
+      );
+    }
+
+    throw error;
+  }
 
   res.status(200).json({
     user: updatedUser,
