@@ -205,6 +205,67 @@ paths:
         "500":
           description: Internal server error
 
+  /api/users/me:
+    get:
+      tags:
+        - Users
+      summary: Get current user
+      description: Returns profile information for the authenticated user.
+      operationId: getCurrentUser
+
+      security:
+        - cookieAuth: []
+
+      responses:
+        "200":
+          description: Successfully found current user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                  - data
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Successfully found current user profile
+                  data:
+                    type: object
+                    required:
+                      - _id
+                      - name
+                    properties:
+                      _id:
+                        type: string
+                        example: 6881563901add19ee16fd012
+                      name:
+                        type: string
+                        example: Дмитро Романенко
+                      avatarUrl:
+                        type: string
+                        format: uri
+                        example: https://res.cloudinary.com/example/image/upload/avatar.jpg
+                      description:
+                        type: string
+                        example: Люблю подорожувати та ділитися історіями.
+                      articlesAmount:
+                        type: integer
+                        example: 5
+
+        "401":
+          description: Unauthorized
+
+        "404":
+          description: User not found
+
+        "500":
+          description: Internal server error
+
   /api/users/{id}:
     get:
       tags:
