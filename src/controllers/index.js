@@ -9,7 +9,11 @@ import { getOwnStories, getSavedStories } from "./stories/storyController.js";
 import { addFavoriteStory } from "./stories/addFavoriteStory.js";
 import { removeFavoriteStory } from "./stories/removeFavoriteStory.js";
 import { updateUser } from "./users/updateUser.js";
-import { getTravellerProfile, getAllUsers } from "./users/userController.js";
+import {
+  getTravellerProfile,
+  getAllUsers,
+  getCurrentUser,
+} from "./users/userController.js";
 
 export const categoriesController = {
   getCategories,
@@ -29,6 +33,7 @@ export const storiesController = {
 export const usersController = {
   getTravellerProfile,
   getAllUsers,
+  getCurrentUser,
   updateUser,
 };
 
