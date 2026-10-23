@@ -1,4 +1,5 @@
 import { loginUser } from "./auth/loginUser.js";
+import { logoutUser } from "./auth/logoutUser.js";
 import { getCategories } from "./categories/getCategories.js";
 import { createStory } from "./stories/createStory.js";
 import { updateStory } from "./stories/updateStory.js";
@@ -28,4 +29,5 @@ export const usersController = {
 
 export const authController = {
   loginUser,
+  logoutUser,
 };
