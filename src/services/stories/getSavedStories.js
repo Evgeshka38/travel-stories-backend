@@ -13,7 +13,12 @@ export const getSavedStoriesService = async (userId, query) => {
 
   const [totalItems, stories] = await Promise.all([
     Story.countDocuments(filter),
-    Story.find(filter).sort({ date: -1, _id: -1 }).skip(skip).limit(perPage),
+    Story.find(filter)
+  .populate("category", "name")
+  .populate("ownerId", "name avatarUrl")
+  .sort({ date: -1, _id: -1 })
+  .skip(skip)
+  .limit(perPage),
   ]);
 
   const hasNextPage = skip + stories.length < totalItems;
