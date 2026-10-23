@@ -12,6 +12,7 @@ import { ctrlWrapper } from "../utils/index.js";
 import { authenticate } from "../middlewares/authenticate.js";
 import { addFavoriteStory } from "../controllers/stories/addFavoriteStory.js";
 import { storyIdSchema } from "../validations/storyValidation.js";
+import { removeFavoriteStory } from "../controllers/stories/removeFavoriteStory.js";
 
 const router = Router();
 
@@ -59,7 +60,7 @@ router.patch(
   "/favorites/remove/:storyId",
   authenticate,
   celebrate(storyIdSchema),
-  ctrlWrapper(),
+  ctrlWrapper(removeFavoriteStory),
 );
 
 export default router;
