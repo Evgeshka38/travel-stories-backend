@@ -7,11 +7,11 @@ import {
   storyBodySchema,
   updateStoryBodySchema,
   getPopularStoriesSchema,
+  storyIdSchema,
 } from "../validations/storiesValidation.js";
 import { ctrlWrapper } from "../utils/index.js";
 import { authenticate } from "../middlewares/authenticate.js";
 import { addFavoriteStory } from "../controllers/stories/addFavoriteStory.js";
-import { storyIdSchema } from "../validations/storyValidation.js";
 import { removeFavoriteStory } from "../controllers/stories/removeFavoriteStory.js";
 
 const router = Router();
