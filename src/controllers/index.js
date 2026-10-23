@@ -18,6 +18,8 @@ export const storiesController = {
   updateStory,
   getPopularStories,
   getOwnStories,
+  addFavoriteStory,
+  removeFavoriteStory,
 };
 
 export const usersController = {

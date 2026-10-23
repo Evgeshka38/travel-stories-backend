@@ -10,6 +10,7 @@ import {
 } from "../validations/storiesValidation.js";
 import { ctrlWrapper } from "../utils/index.js";
 import { authenticate } from "../middlewares/authenticate.js";
+import { addFavoriteStory } from "../controllers/stories/addFavoriteStory.js";
 
 const router = Router();
 
@@ -44,6 +45,20 @@ router.patch(
   authenticate,
   celebrate(updateStoryBodySchema),
   ctrlWrapper(storiesController.updateStory),
+);
+
+router.patch(
+  "/favorite/add/:storyId",
+  authenticate,
+  celebrate(),
+  ctrlWrapper(addFavoriteStory),
+);
+
+router.patch(
+  "/favorites/remove/:storyId",
+  authenticate,
+  celebrate(),
+  ctrlWrapper(),
 );
 
 export default router;
