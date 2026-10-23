@@ -1,5 +1,5 @@
 import createHttpError from "http-errors";
-// import { Story } from "../../models.js";
+import { Story } from "../../models/story.js";
 import { storiesService } from "../../services/index.js";
 import { updateUserService } from "../../services/users/updateUser.js";
 
