@@ -11,6 +11,7 @@ import {
 import { ctrlWrapper } from "../utils/index.js";
 import { authenticate } from "../middlewares/authenticate.js";
 import { addFavoriteStory } from "../controllers/stories/addFavoriteStory.js";
+import { storyIdSchema } from "../validations/storyValidation.js";
 
 const router = Router();
 
@@ -50,9 +51,15 @@ router.patch(
 router.patch(
   "/favorite/add/:storyId",
   authenticate,
+  celebrate(storyIdSchema),
   ctrlWrapper(addFavoriteStory),
 );
 
-router.patch("/favorites/remove/:storyId", authenticate, ctrlWrapper());
+router.patch(
+  "/favorites/remove/:storyId",
+  authenticate,
+  celebrate(storyIdSchema),
+  ctrlWrapper(),
+);
 
 export default router;
