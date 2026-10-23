@@ -3,6 +3,7 @@ import { getAllUsersService } from "../../services/users/getAllUsers.js";
 import { saveFileToCloudinary } from "../../utils/saveFileToCloudinary.js";
 import { User } from "../../models/user.js";
 import createHttpError from "http-errors";
+import { updateUserAvatarService } from "../../services/users/updateUserAvatarService.js";
 
 export const getTravellerProfile = async (req, res) => {
   const { id } = req.params;
@@ -32,11 +33,7 @@ export const updateUserAvatar = async (req, res) => {
   }
   const result = await saveFileToCloudinary(file.buffer, user._id);
 
-  const updateUser = await User.findOneAndUpdate(
-    { _id: user._id },
-    { avatarUrl: result.secure_url },
-    { returnDocument: "after" },
-  );
+  const updateUser = await updateUserAvatarService(user._id, result.secure_url);
 
   res.status(200).json({
     status: 200,

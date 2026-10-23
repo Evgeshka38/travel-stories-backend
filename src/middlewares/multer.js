@@ -1,3 +1,4 @@
+import createHttpError from "http-errors";
 import multer from "multer";
 
 export const upload = multer({
@@ -9,7 +10,7 @@ export const upload = multer({
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
-      cb(new Error("Only image allowed"));
+      cb(createHttpError(400, "Only image allowed"));
     }
   },
 });
