@@ -11,6 +11,7 @@ import { clearSessionCookies } from "./auth/clearSessionCookies.js";
 import { updateUserService } from "./users/updateUser.js";
 import { getTravellerProfileService } from "./users/getTravellerProfile.js";
 import { getAllUsersService } from "./users/getAllUsers.js";
+import { getSessionUser } from "./auth/getSessionUser.js";
 
 export const categoriesService = {
   getCategories,
@@ -27,6 +28,7 @@ export const authService = {
   createSession,
   setSessionCookies,
   clearSessionCookies,
+  getSessionUser,
 };
 
 export const usersService = {

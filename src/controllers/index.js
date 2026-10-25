@@ -14,6 +14,7 @@ import {
   getAllUsers,
   getCurrentUser,
 } from "./users/userController.js";
+import { getSessionUser } from "./auth/getSessionUser.js";
 
 export const categoriesController = {
   getCategories,
@@ -40,4 +41,5 @@ export const usersController = {
 export const authController = {
   loginUser,
   logoutUser,
+  getSessionUser,
 };
