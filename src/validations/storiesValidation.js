@@ -1,11 +1,11 @@
-import { Joi, Segments } from "celebrate";
-import { isValidObjectId } from "mongoose";
+import { Joi, Segments } from 'celebrate';
+import { isValidObjectId } from 'mongoose';
 
 const objectIdPattern = /^[0-9a-fA-F]{24}$/;
 
 const objectIdValidator = (value, helpers) => {
   return !isValidObjectId(value)
-    ? helpers.message({ custom: "Invalid category id format" })
+    ? helpers.message({ custom: 'Invalid category id format' })
     : value;
 };
 
@@ -33,11 +33,9 @@ export const getPopularStoriesSchema = {
 
 export const storyBodySchema = {
   [Segments.BODY]: Joi.object({
-    img: Joi.string().uri().required(),
     title: Joi.string().trim().min(1).max(80).required(),
     article: Joi.string().trim().min(1).max(2500).required(),
     category: Joi.string().pattern(objectIdPattern).required(),
-    date: Joi.string().isoDate().required(),
   }),
 };
 

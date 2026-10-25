@@ -1,9 +1,23 @@
+import { randomUUID } from 'node:crypto';
 import { storiesService } from '../../services/index.js';
+import { saveStoryCoverToCloudinary } from '../../utils/saveStoryCoverToCloudinary.js';
 
 export const createStory = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({
+      status: 400,
+      message: 'Story cover is required',
+    });
+  }
+
+  const coverId = randomUUID();
+  const cover = await saveStoryCoverToCloudinary(req.file.buffer, coverId);
+
   const story = await storiesService.createStory({
     ...req.body,
+    img: cover.secure_url,
     ownerId: req.user._id,
+    date: new Date().toISOString().slice(0, 10),
   });
 
   res.status(201).json({
