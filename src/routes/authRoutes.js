@@ -21,10 +21,8 @@ router.post(
   ctrlWrapper(authController.loginUser),
 );
 
-router.post(
-  "/logout",
-  authenticate,
-  ctrlWrapper(authController.logoutUser),
-);
+router.post("/logout", authenticate, ctrlWrapper(authController.logoutUser));
+
+router.get("/session", ctrlWrapper(authController.getSessionUser));
 
 export default router;
