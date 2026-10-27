@@ -42,6 +42,12 @@ router.get(
   ctrlWrapper(storiesController.getPopularStories),
 );
 
+router.get(
+  "/:storyId",
+  celebrate(storyIdSchema),
+  ctrlWrapper(storiesController.getStoryById),
+);
+
 router.post(
   "/",
   authenticate,

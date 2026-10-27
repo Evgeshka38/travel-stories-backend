@@ -15,6 +15,7 @@ import {
   getCurrentUser,
 } from "./users/userController.js";
 import { getSessionUser } from "./auth/getSessionUser.js";
+import { getStoryById } from "./stories/getStoryById.js";
 
 export const categoriesController = {
   getCategories,
@@ -29,6 +30,7 @@ export const storiesController = {
   getSavedStories,
   addFavoriteStory,
   removeFavoriteStory,
+  getStoryById,
 };
 
 export const usersController = {
