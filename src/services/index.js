@@ -12,6 +12,7 @@ import { updateUserService } from "./users/updateUser.js";
 import { getTravellerProfileService } from "./users/getTravellerProfile.js";
 import { getAllUsersService } from "./users/getAllUsers.js";
 import { getSessionUser } from "./auth/getSessionUser.js";
+import { getStoryById } from "./stories/getStoryById.js";
 
 export const categoriesService = {
   getCategories,
@@ -22,6 +23,7 @@ export const storiesService = {
   createStory,
   updateStory,
   getStory,
+  getStoryById,
 };
 
 export const authService = {
