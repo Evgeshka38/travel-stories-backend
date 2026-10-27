@@ -2,50 +2,49 @@ paths:
   /api/stories:
     get:
       tags:
-        - Stories
+      - Stories
       summary: Get all stories
-      description: Returns a paginated list of stories with optional filtering by category.
       operationId: getStories
-
+      description: Returns a paginated list of stories with optional category filtering. Stories are sorted by publication
+        date descending with `_id` as a stable tie-breaker. A valid but non-existing category ObjectId returns 200
+        with an empty stories array.
       parameters:
-        - name: page
-          in: query
-          required: false
-          description: Page number
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-
-        - name: perPage
-          in: query
-          required: false
-          description: Number of stories per page
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 20
-            default: 9
-
-        - name: category
-          in: query
-          required: false
-          description: Category MongoDB ObjectId
-          schema:
-            type: string
-            example: 68fb50c80ae91338641121f8
-
+      - name: page
+        in: query
+        required: false
+        description: Page number.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: perPage
+        in: query
+        required: false
+        description: Number of stories per API page. Keep the same perPage while traversing consecutive pages to
+          avoid gaps/duplicates.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 9
+      - name: category
+        in: query
+        required: false
+        description: Category MongoDB ObjectId. Malformed value returns 400.
+        schema:
+          $ref: '#/components/schemas/MongoObjectId'
       responses:
-        "200":
-          description: Successfully found stories
+        '200':
+          description: Successfully found stories. A valid page beyond the end returns 200 with an empty stories
+            array.
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  - status
-                  - message
-                  - data
+                - status
+                - message
+                - data
                 properties:
                   status:
                     type: integer
@@ -56,94 +55,125 @@ paths:
                   data:
                     type: object
                     required:
-                      - stories
-                      - page
-                      - perPage
-                      - totalItems
-                      - totalPages
-                      - hasNextPage
-                      - hasPreviousPage
+                    - stories
+                    - page
+                    - perPage
+                    - totalItems
+                    - hasNextPage
+                    - totalPages
+                    - hasPreviousPage
                     properties:
                       stories:
                         type: array
                         items:
-                          $ref: "#/components/schemas/Story"
+                          $ref: '#/components/schemas/Story'
                       page:
                         type: integer
+                        minimum: 1
                         example: 1
                       perPage:
                         type: integer
+                        minimum: 1
                         example: 9
                       totalItems:
                         type: integer
+                        minimum: 0
                         example: 24
-                      totalPages:
-                        type: integer
-                        example: 3
                       hasNextPage:
                         type: boolean
                         example: true
+                      totalPages:
+                        type: integer
+                        minimum: 0
+                        example: 3
                       hasPreviousPage:
                         type: boolean
                         example: false
-
-        "400":
-          description: Invalid query parameters
-
-        "500":
+              examples:
+                empty:
+                  value:
+                    status: 200
+                    message: Successfully found stories!
+                    data:
+                      stories: []
+                      page: 100
+                      perPage: 9
+                      totalItems: 24
+                      totalPages: 3
+                      hasNextPage: false
+                      hasPreviousPage: true
+        '400':
+          description: Invalid query parameters or malformed category ObjectId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                message: Invalid query parameters
+        '500':
           description: Internal server error
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                message: Internal server error
     post:
       tags:
-        - Stories
+      - Stories
       summary: Create a story
-      description: Creates a new story for the authenticated user.
       operationId: createStory
-
+      security:
+      - cookieAuth: []
+      description: Creates a story for the authenticated user. The client sends multipart/form-data with cover,
+        title, article and category. Backend uploads the cover and generates `img`, `ownerId`, `date` and initial
+        `favoriteCount`. Unknown/server-managed fields are rejected.
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
+              additionalProperties: false
               required:
-                - img
-                - title
-                - article
-                - category
-                - date
+              - cover
+              - title
+              - article
+              - category
               properties:
-                img:
+                cover:
                   type: string
-                  format: uri
-                  example: https://example.com/story-image.jpg
+                  format: binary
+                  description: JPEG, PNG or WEBP image. Maximum 2097152 bytes (2 MiB).
                 title:
                   type: string
+                  minLength: 1
                   maxLength: 80
-                  example: "Сванетія: серед веж і гірських легенд"
+                  description: Trimmed; whitespace-only value is invalid.
+                  example: 'Сванетія: серед веж і гірських легенд'
                 article:
                   type: string
+                  minLength: 1
                   maxLength: 2500
+                  description: Trimmed; whitespace-only value is invalid.
                   example: Подорож до Сванетії залишила незабутні враження...
                 category:
-                  type: string
-                  example: 68fb50c80ae91338641121f8
-                date:
-                  type: string
-                  format: date
-                  example: "2026-10-22"
-
+                  allOf:
+                  - $ref: '#/components/schemas/MongoObjectId'
+                  description: Existing category ObjectId.
       responses:
-        "201":
+        '201':
           description: Successfully created a story
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  - status
-                  - message
-                  - data
+                - status
+                - message
+                - data
                 properties:
                   status:
                     type: integer
@@ -152,59 +182,81 @@ paths:
                     type: string
                     example: Successfully created a story!
                   data:
-                    $ref: "#/components/schemas/Story"
-
-        "400":
-          description: Invalid request data
-
-        "401":
+                    $ref: '#/components/schemas/Story'
+        '400':
+          description: Invalid text fields, malformed ObjectId, unsupported/corrupted cover or cover larger than
+            2 MiB
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                message: Invalid request data
+        '401':
           description: Unauthorized
-
-        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                message: Unauthorized
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                message: Category not found
+        '500':
           description: Internal server error
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                message: Internal server error
   /api/stories/own:
     get:
       tags:
-        - Stories
+      - Stories
       summary: Get own stories
-      description: Returns a paginated list of stories created by the authenticated user.
       operationId: getOwnStories
-
       security:
-        - cookieAuth: []
-
+      - cookieAuth: []
+      description: Returns stories created by the authenticated user, ordered by publication date descending with
+        `_id` as a stable tie-breaker.
       parameters:
-        - name: page
-          in: query
-          required: false
-          description: Page number
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-
-        - name: perPage
-          in: query
-          required: false
-          description: Number of stories per page
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 50
-            default: 12
-
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: perPage
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 12
       responses:
-        "200":
-          description: Successfully found own stories
+        '200':
+          description: Successfully found own stories. A page beyond the end returns 200 with an empty stories array.
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  - status
-                  - message
-                  - data
+                - status
+                - message
+                - data
                 properties:
                   status:
                     type: integer
@@ -215,80 +267,97 @@ paths:
                   data:
                     type: object
                     required:
-                      - stories
-                      - page
-                      - perPage
-                      - totalItems
-                      - hasNextPage
+                    - stories
+                    - page
+                    - perPage
+                    - totalItems
+                    - hasNextPage
                     properties:
                       stories:
                         type: array
                         items:
-                          $ref: "#/components/schemas/Story"
+                          $ref: '#/components/schemas/Story'
                       page:
                         type: integer
+                        minimum: 1
                         example: 1
                       perPage:
                         type: integer
-                        example: 12
+                        minimum: 1
+                        example: 9
                       totalItems:
                         type: integer
-                        example: 7
+                        minimum: 0
+                        example: 24
                       hasNextPage:
                         type: boolean
-                        example: false
-
-        "400":
+                        example: true
+        '400':
           description: Invalid query parameters
-
-        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                message: Invalid query parameters
+        '401':
           description: Unauthorized
-
-        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                message: Unauthorized
+        '500':
           description: Internal server error
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                message: Internal server error
   /api/stories/saved:
     get:
       tags:
-        - Stories
+      - Stories
       summary: Get saved stories
-      description: Returns a paginated list of stories saved by the authenticated user.
       operationId: getSavedStories
-
       security:
-        - cookieAuth: []
-
+      - cookieAuth: []
+      description: Returns stories saved by the authenticated user. The Frontend uses the complete set of saved
+        story IDs as the personal bookmark state and updates/invalidates this cache after favorite add/remove. Results
+        are ordered by story publication date descending with `_id` as a stable tie-breaker.
       parameters:
-        - name: page
-          in: query
-          required: false
-          description: Page number
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-
-        - name: perPage
-          in: query
-          required: false
-          description: Number of saved stories per page
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 50
-            default: 12
-
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: perPage
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 12
       responses:
-        "200":
-          description: Successfully found saved stories
+        '200':
+          description: Successfully found saved stories. A page beyond the end returns 200 with an empty stories
+            array.
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  - status
-                  - message
-                  - data
+                - status
+                - message
+                - data
                 properties:
                   status:
                     type: integer
@@ -299,77 +368,95 @@ paths:
                   data:
                     type: object
                     required:
-                      - stories
-                      - page
-                      - perPage
-                      - totalItems
-                      - hasNextPage
+                    - stories
+                    - page
+                    - perPage
+                    - totalItems
+                    - hasNextPage
                     properties:
                       stories:
                         type: array
                         items:
-                          $ref: "#/components/schemas/Story"
+                          $ref: '#/components/schemas/Story'
                       page:
                         type: integer
+                        minimum: 1
                         example: 1
                       perPage:
                         type: integer
-                        example: 12
+                        minimum: 1
+                        example: 9
                       totalItems:
                         type: integer
-                        example: 5
+                        minimum: 0
+                        example: 24
                       hasNextPage:
                         type: boolean
-                        example: false
-
-        "400":
+                        example: true
+        '400':
           description: Invalid query parameters
-
-        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                message: Invalid query parameters
+        '401':
           description: Unauthorized
-
-        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                message: Unauthorized
+        '500':
           description: Internal server error
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                message: Internal server error
   /api/stories/popular:
     get:
       tags:
-        - Stories
+      - Stories
       summary: Get popular stories
-      description: Returns a paginated list of stories sorted by favorite count in descending order.
       operationId: getPopularStories
-
+      description: Returns popular stories ordered by `favoriteCount DESC`, then publication `date DESC`, then `_id`
+        as a stable tie-breaker. This endpoint does not automatically exclude the currently opened story; StoryPage
+        filters its current story client-side and may request one additional item.
       parameters:
-        - name: page
-          in: query
-          required: false
-          description: Page number
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-
-        - name: perPage
-          in: query
-          required: false
-          description: Number of stories per page
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 12
-            default: 3
-
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: perPage
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 12
+          default: 3
       responses:
-        "200":
-          description: Successfully found popular stories
+        '200':
+          description: Successfully found popular stories. A page beyond the end returns 200 with an empty stories
+            array.
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  - status
-                  - message
-                  - data
+                - status
+                - message
+                - data
                 properties:
                   status:
                     type: integer
@@ -380,66 +467,77 @@ paths:
                   data:
                     type: object
                     required:
-                      - stories
-                      - page
-                      - perPage
-                      - totalItems
-                      - hasNextPage
+                    - stories
+                    - page
+                    - perPage
+                    - totalItems
+                    - hasNextPage
                     properties:
                       stories:
                         type: array
                         items:
-                          $ref: "#/components/schemas/Story"
+                          $ref: '#/components/schemas/Story'
                       page:
                         type: integer
+                        minimum: 1
                         example: 1
                       perPage:
                         type: integer
-                        example: 3
+                        minimum: 1
+                        example: 9
                       totalItems:
                         type: integer
+                        minimum: 0
                         example: 24
                       hasNextPage:
                         type: boolean
                         example: true
-
-        "400":
+        '400':
           description: Invalid query parameters
-
-        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                message: Invalid query parameters
+        '500':
           description: Internal server error
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                message: Internal server error
   /api/stories/favorite/add/{storyId}:
     patch:
       tags:
-        - Stories
+      - Stories
       summary: Add story to favorites
-      description: Adds a story to the authenticated user's favorites and increases its favorite count.
       operationId: addFavoriteStory
-
       security:
-        - cookieAuth: []
-
+      - cookieAuth: []
+      description: Idempotently adds a story to the authenticated user favorites. Repeated add returns 200 without
+        creating a duplicate and without changing favoriteCount. A user cannot save their own story.
       parameters:
-        - name: storyId
-          in: path
-          required: true
-          description: Story MongoDB ObjectId
-          schema:
-            type: string
-            example: 68498236a100312bea079008
-
+      - name: storyId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/MongoObjectId'
       responses:
-        "200":
-          description: Story added to favorites or already exists in favorites
+        '200':
+          description: Story added to favorites or already present. `favoriteCount` changes only when membership
+            actually changes.
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  - status
-                  - message
-                  - data
+                - status
+                - message
+                - data
                 properties:
                   status:
                     type: integer
@@ -450,57 +548,86 @@ paths:
                   data:
                     type: object
                     required:
-                      - user
-                      - story
+                    - user
+                    - story
                     properties:
                       user:
-                        $ref: "#/components/schemas/User"
+                        $ref: '#/components/schemas/User'
                       story:
-                        $ref: "#/components/schemas/Story"
-
-        "400":
-          description: Invalid story ID
-
-        "401":
+                        $ref: '#/components/schemas/Story'
+        '400':
+          description: Malformed story ObjectId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                message: Invalid story ID
+        '401':
           description: Unauthorized
-
-        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                message: Unauthorized
+        '403':
+          description: The owner cannot save their own story
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 403
+                message: You cannot save your own story
+        '404':
           description: Story not found
-
-        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                message: Story not found
+        '500':
           description: Internal server error
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                message: Internal server error
   /api/stories/favorite/remove/{storyId}:
     patch:
       tags:
-        - Stories
+      - Stories
       summary: Remove story from favorites
-      description: Removes a story from the authenticated user's favorites and decreases its favorite count.
       operationId: removeFavoriteStory
-
       security:
-        - cookieAuth: []
-
+      - cookieAuth: []
+      description: Idempotently removes a saved story. Repeated remove returns 200 without changing favoriteCount.
+        favoriteCount never becomes negative.
       parameters:
-        - name: storyId
-          in: path
-          required: true
-          description: Story MongoDB ObjectId
-          schema:
-            type: string
-            example: 68498236a100312bea079008
-
+      - name: storyId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/MongoObjectId'
       responses:
-        "200":
-          description: Story removed from favorites or was not present in favorites
+        '200':
+          description: Story removed from favorites or was not present. `favoriteCount` changes only when membership
+            actually changes.
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  - status
-                  - message
-                  - data
+                - status
+                - message
+                - data
                 properties:
                   status:
                     type: integer
@@ -511,82 +638,167 @@ paths:
                   data:
                     type: object
                     required:
-                      - user
-                      - story
+                    - user
+                    - story
                     properties:
                       user:
-                        $ref: "#/components/schemas/User"
+                        $ref: '#/components/schemas/User'
                       story:
-                        $ref: "#/components/schemas/Story"
-
-        "400":
-          description: Invalid story ID
-
-        "401":
+                        $ref: '#/components/schemas/Story'
+        '400':
+          description: Malformed story ObjectId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                message: Invalid story ID
+        '401':
           description: Unauthorized
-
-        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                message: Unauthorized
+        '404':
           description: Story not found
-
-        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                message: Story not found
+        '500':
           description: Internal server error
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                message: Internal server error
   /api/stories/{storyId}:
+    get:
+      tags:
+      - Stories
+      summary: Get story by ID
+      operationId: getStoryById
+      description: Returns one story. Story contains ownerId; author profile data is obtained separately via `GET
+        /api/users/{ownerId}`.
+      parameters:
+      - name: storyId
+        in: path
+        required: true
+        description: Malformed ObjectId returns 400; valid but missing story returns 404.
+        schema:
+          $ref: '#/components/schemas/MongoObjectId'
+      responses:
+        '200':
+          description: Successfully found story
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - status
+                - message
+                - data
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Successfully found story
+                  data:
+                    $ref: '#/components/schemas/Story'
+        '400':
+          description: Malformed story ObjectId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                message: Invalid story ID
+        '404':
+          description: Story not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                message: Story not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                message: Internal server error
     patch:
       tags:
-        - Stories
+      - Stories
       summary: Update a story
-      description: Updates a story owned by the authenticated user.
       operationId: updateStory
-
+      security:
+      - cookieAuth: []
+      description: Partially updates a story owned by the authenticated user. Accepts multipart/form-data. If cover
+        is omitted, the existing image remains. `ownerId`, original publication `date` and `favoriteCount` are not
+        client-editable. Unknown/server-managed fields are rejected.
       parameters:
-        - name: storyId
-          in: path
-          required: true
-          description: Story MongoDB ObjectId
-          schema:
-            type: string
-            example: 68498236a100312bea079008
-
+      - name: storyId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/MongoObjectId'
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               minProperties: 1
+              additionalProperties: false
               properties:
-                img:
+                cover:
                   type: string
-                  format: uri
-                  example: https://example.com/story-image.jpg
+                  format: binary
+                  description: JPEG, PNG or WEBP image. Maximum 2097152 bytes (2 MiB).
                 title:
                   type: string
+                  minLength: 1
                   maxLength: 80
-                  example: Оновлена назва історії
+                  description: Trimmed; whitespace-only value is invalid.
+                  example: 'Сванетія: серед веж і гірських легенд'
                 article:
                   type: string
+                  minLength: 1
                   maxLength: 2500
-                  example: Оновлений текст історії...
+                  description: Trimmed; whitespace-only value is invalid.
+                  example: Подорож до Сванетії залишила незабутні враження...
                 category:
-                  type: string
-                  example: 68fb50c80ae91338641121f8
-                date:
-                  type: string
-                  format: date
-                  example: "2026-10-22"
-
+                  allOf:
+                  - $ref: '#/components/schemas/MongoObjectId'
+                  description: Existing category ObjectId.
       responses:
-        "200":
+        '200':
           description: Successfully updated a story
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  - status
-                  - message
-                  - data
+                - status
+                - message
+                - data
                 properties:
                   status:
                     type: integer
@@ -595,16 +807,40 @@ paths:
                     type: string
                     example: Successfully updated a story!
                   data:
-                    $ref: "#/components/schemas/Story"
-
-        "400":
-          description: Invalid request data or story ID
-
-        "401":
+                    $ref: '#/components/schemas/Story'
+        '400':
+          description: Invalid request data, unknown field, malformed ObjectId or invalid cover
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                message: Invalid request data
+        '401':
           description: Unauthorized
-
-        "404":
-          description: Story not found or does not belong to the current user
-
-        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                message: Unauthorized
+        '404':
+          description: Story/category not found, or story does not belong to current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                message: Story not found
+        '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                message: Internal server error

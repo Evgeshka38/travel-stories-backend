@@ -1,76 +1,114 @@
 components:
   schemas:
+    MongoObjectId:
+      type: string
+      pattern: ^[0-9a-fA-F]{24}$
+      description: MongoDB ObjectId as a 24-character hexadecimal string.
+      example: 68498236a100312bea079008
     Category:
       type: object
       required:
-        - _id
-        - name
+      - _id
+      - name
       properties:
         _id:
-          type: string
-          example: 68fb50c80ae91338641121f0
+          allOf:
+          - $ref: '#/components/schemas/MongoObjectId'
         name:
           type: string
           example: Азія
-
     User:
       type: object
       required:
-        - _id
-        - name
-        - avatarUrl
-        - description
-        - articlesAmount
+      - _id
+      - name
+      - avatarUrl
+      - description
+      - articlesAmount
       properties:
         _id:
-          type: string
-          example: 6881563901add19ee16fd012
+          allOf:
+          - $ref: '#/components/schemas/MongoObjectId'
         name:
           type: string
+          minLength: 1
+          maxLength: 32
+          description: Trimmed before validation. May contain letters, spaces, apostrophes and hyphens.
           example: Матвій Мельник
         avatarUrl:
           type: string
           format: uri
-          example: https://ftp.goit.study/img/travel-blog/6881563901add19ee16fd012.webp
+          nullable: true
+          default: null
+          description: Null until the user uploads an avatar.
+          example: https://res.cloudinary.com/example/image/upload/avatar.jpg
         description:
           type: string
-          example: Я Матвій. Шукаю натхнення у кожній поїздці.
+          maxLength: 150
+          default: ''
+          description: Trimmed text. Empty string is allowed to clear the profile description.
+          example: Шукаю натхнення у кожній поїздці.
         articlesAmount:
           type: integer
+          minimum: 0
+          default: 0
           example: 3
-
     Story:
       type: object
       required:
-        - _id
-        - img
-        - title
-        - article
-        - category
-        - ownerId
+      - _id
+      - img
+      - title
+      - article
+      - category
+      - ownerId
+      - date
+      - favoriteCount
       properties:
         _id:
-          type: string
-          example: 68498236a100312bea079008
+          allOf:
+          - $ref: '#/components/schemas/MongoObjectId'
         img:
           type: string
           format: uri
-          example: https://ftp.goit.study/img/travel-blog/68498236a100312bea079008.webp
+          example: https://res.cloudinary.com/example/image/upload/story.jpg
         title:
           type: string
-          example: "Йорданія: шлях у Петру"
+          minLength: 1
+          maxLength: 80
+          example: 'Йорданія: шлях у Петру'
         article:
           type: string
+          minLength: 1
+          maxLength: 2500
           example: Петра — одне з нових чудес світу...
         category:
-          type: string
-          example: 68fb50c80ae91338641121f0
+          allOf:
+          - $ref: '#/components/schemas/MongoObjectId'
         ownerId:
-          type: string
-          example: 6881563901add19ee16fd012
+          allOf:
+          - $ref: '#/components/schemas/MongoObjectId'
         date:
           type: string
-          example: "2025-01-10"
+          format: date
+          description: Publication date in YYYY-MM-DD format. It is not changed by ordinary story editing.
+          example: '2026-10-22'
         favoriteCount:
           type: integer
+          minimum: 0
+          default: 0
           example: 4
+    ErrorResponse:
+      type: object
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: Invalid request data
+      description: MVP error contract. Field-error arrays and machine-readable error codes are not part of the current
+        API contract.
