@@ -4,3 +4,5 @@ components:
       type: apiKey
       in: cookie
       name: accessToken
+      description: Authentication cookie used by protected endpoints. Auth flows also use httpOnly refreshToken
+        and sessionId cookies. Cookies are Secure and SameSite=None in production.

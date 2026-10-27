@@ -2,20 +2,20 @@ paths:
   /api/categories:
     get:
       tags:
-        - Categories
+      - Categories
       summary: Get all categories
       operationId: getCategories
       responses:
-        "200":
+        '200':
           description: Successfully found categories
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  - status
-                  - message
-                  - data
+                - status
+                - message
+                - data
                 properties:
                   status:
                     type: integer
@@ -26,6 +26,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Category"
-        "500":
+                      $ref: '#/components/schemas/Category'
+        '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                message: Internal server error
