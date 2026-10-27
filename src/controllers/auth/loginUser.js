@@ -1,16 +1,16 @@
-import bcrypt from "bcrypt";
-import { User, Session } from "../../models/index.js";
-import { authService } from "../../services/index.js";
-import createHttpError from "http-errors";
+import bcrypt from 'bcrypt';
+import { User, Session } from '../../models/index.js';
+import { authService } from '../../services/index.js';
+import createHttpError from 'http-errors';
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
-  if (!user) throw createHttpError(401, "Invalid credentials");
+  if (!user) throw createHttpError(401, 'Неправильні облікові дані');
 
   const isValidPassword = await bcrypt.compare(password, user.password);
-  if (!isValidPassword) throw createHttpError(401, "Invalid credentials");
+  if (!isValidPassword) throw createHttpError(401, 'Неправильні облікові дані');
 
   const userId = user._id;
 
@@ -21,7 +21,7 @@ export const loginUser = async (req, res) => {
 
   res.status(200).json({
     status: 200,
-    message: "Successful login",
+    message: 'Увійшли успішно',
     data: user,
   });
 };

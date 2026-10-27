@@ -6,7 +6,7 @@ export const createStory = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({
       status: 400,
-      message: 'Story cover is required',
+      message: 'Необхідна обкладинка історії',
     });
   }
 
@@ -22,7 +22,7 @@ export const createStory = async (req, res) => {
 
   res.status(201).json({
     status: 201,
-    message: 'Successfully created a story!',
+    message: 'Історія успішно створена!',
     data: story,
   });
 };
