@@ -1,9 +1,9 @@
-import createHttpError from "http-errors";
-import { User } from "../../models/user.js";
-import bcrypt from "bcrypt";
-import { PASSWORD_HASH_SALT } from "../../constants/authConstants.js";
-import { createSession } from "../../services/auth/createSession.js";
-import { setSessionCookies } from "../../services/auth/setSessionCookies.js";
+import createHttpError from 'http-errors';
+import { User } from '../../models/user.js';
+import bcrypt from 'bcrypt';
+import { PASSWORD_HASH_SALT } from '../../constants/authConstants.js';
+import { createSession } from '../../services/auth/createSession.js';
+import { setSessionCookies } from '../../services/auth/setSessionCookies.js';
 
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -11,7 +11,10 @@ export const registerUser = async (req, res) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    throw createHttpError(409, "A user with this email is already registered");
+    throw createHttpError(
+      409,
+      'Користувач із цією електронною адресою вже зареєстрований'
+    );
   }
   const hashedPassword = await bcrypt.hash(password, PASSWORD_HASH_SALT);
 
@@ -25,7 +28,7 @@ export const registerUser = async (req, res) => {
 
   res.status(201).json({
     status: 201,
-    message: "Successfully registered a user",
+    message: 'Користувач успішно зареєстрований',
     data: newUser,
   });
 };

@@ -1,6 +1,6 @@
-import { Router } from "express";
-import { celebrate } from "celebrate";
-import { storiesController } from "../controllers/index.js";
+import { Router } from 'express';
+import { celebrate } from 'celebrate';
+import { storiesController } from '../controllers/index.js';
 import {
   getStoriesSchema,
   getOwnStoriesSchema,
@@ -8,38 +8,39 @@ import {
   updateStoryBodySchema,
   getPopularStoriesSchema,
   storyIdSchema,
-} from "../validations/storiesValidation.js";
-import { ctrlWrapper } from "../utils/index.js";
-import { authenticate } from "../middlewares/authenticate.js";
-import { addFavoriteStory } from "../controllers/stories/addFavoriteStory.js";
-import { removeFavoriteStory } from "../controllers/stories/removeFavoriteStory.js";
+} from '../validations/storiesValidation.js';
+import { ctrlWrapper } from '../utils/index.js';
+import { authenticate } from '../middlewares/authenticate.js';
+import { addFavoriteStory } from '../controllers/stories/addFavoriteStory.js';
+import { removeFavoriteStory } from '../controllers/stories/removeFavoriteStory.js';
+import { upload } from '../middlewares/multer.js';
 
 const router = Router();
 
 router.get(
-  "/",
+  '/',
   celebrate(getStoriesSchema),
-  ctrlWrapper(storiesController.getStories),
+  ctrlWrapper(storiesController.getStories)
 );
 
 router.get(
-  "/own",
+  '/own',
   authenticate,
   celebrate(getOwnStoriesSchema),
-  ctrlWrapper(storiesController.getOwnStories),
+  ctrlWrapper(storiesController.getOwnStories)
 );
 
 router.get(
-  "/saved",
+  '/saved',
   authenticate,
   celebrate(getOwnStoriesSchema),
-  ctrlWrapper(storiesController.getSavedStories),
+  ctrlWrapper(storiesController.getSavedStories)
 );
 
 router.get(
-  "/popular",
+  '/popular',
   celebrate(getPopularStoriesSchema),
-  ctrlWrapper(storiesController.getPopularStories),
+  ctrlWrapper(storiesController.getPopularStories)
 );
 
 router.get(
@@ -49,31 +50,32 @@ router.get(
 );
 
 router.post(
-  "/",
+  '/',
   authenticate,
+  upload.single('cover'),
   celebrate(storyBodySchema),
-  ctrlWrapper(storiesController.createStory),
+  ctrlWrapper(storiesController.createStory)
 );
 
 router.patch(
-  "/:storyId",
+  '/:storyId',
   authenticate,
   celebrate(updateStoryBodySchema),
-  ctrlWrapper(storiesController.updateStory),
+  ctrlWrapper(storiesController.updateStory)
 );
 
 router.patch(
-  "/favorite/add/:storyId",
+  '/favorite/add/:storyId',
   authenticate,
   celebrate(storyIdSchema),
-  ctrlWrapper(addFavoriteStory),
+  ctrlWrapper(addFavoriteStory)
 );
 
 router.patch(
-  "/favorite/remove/:storyId",
+  '/favorite/remove/:storyId',
   authenticate,
   celebrate(storyIdSchema),
-  ctrlWrapper(removeFavoriteStory),
+  ctrlWrapper(removeFavoriteStory)
 );
 
 export default router;
