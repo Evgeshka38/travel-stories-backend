@@ -7,11 +7,11 @@ import {
   storyBodySchema,
   updateStoryBodySchema,
   getPopularStoriesSchema,
+  storyIdSchema,
 } from "../validations/storiesValidation.js";
 import { ctrlWrapper } from "../utils/index.js";
 import { authenticate } from "../middlewares/authenticate.js";
 import { addFavoriteStory } from "../controllers/stories/addFavoriteStory.js";
-import { storyIdSchema } from "../validations/storyValidation.js";
 import { removeFavoriteStory } from "../controllers/stories/removeFavoriteStory.js";
 
 const router = Router();
@@ -30,9 +30,22 @@ router.get(
 );
 
 router.get(
+  "/saved",
+  authenticate,
+  celebrate(getOwnStoriesSchema),
+  ctrlWrapper(storiesController.getSavedStories),
+);
+
+router.get(
   "/popular",
   celebrate(getPopularStoriesSchema),
   ctrlWrapper(storiesController.getPopularStories),
+);
+
+router.get(
+  "/:storyId",
+  celebrate(storyIdSchema),
+  ctrlWrapper(storiesController.getStoryById),
 );
 
 router.post(

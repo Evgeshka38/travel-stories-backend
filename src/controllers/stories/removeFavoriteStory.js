@@ -1,11 +1,9 @@
 import createHttpError from "http-errors";
-import { Story } from "../../models/story.js";
-import { storiesService } from "../../services/index.js";
-import { updateUserService } from "../../services/users/updateUser.js";
+import { storiesService, usersService } from "../../services/index.js";
 
 export const removeFavoriteStory = async (req, res) => {
   const { storyId } = req.params;
-  const story = await Story.findById(storyId);
+  const story = await storiesService.getStory(storyId);
 
   if (!story) {
     throw createHttpError(404, "Story not found");
@@ -14,11 +12,13 @@ export const removeFavoriteStory = async (req, res) => {
   const isInFavorites = req.user.favorites.some((id) => id.equals(storyId));
 
   if (!isInFavorites) {
-    //? throw createHttpError(400, "Story is not in favorites");
-
     return res.status(200).json({
-      user: req.user,
-      story,
+      status: 200,
+      message: "Story is not in favorites",
+      data: {
+        user: req.user,
+        story,
+      },
     });
   }
 
@@ -46,7 +46,10 @@ export const removeFavoriteStory = async (req, res) => {
   let updatedUser;
 
   try {
-    updatedUser = await updateUserService(req.user.id, updateUserData);
+    updatedUser = await usersService.updateUserService(
+      req.user.id,
+      updateUserData,
+    );
 
     if (!updatedUser) {
       throw createHttpError(500, "Failed to remove story from favorites");
@@ -73,7 +76,11 @@ export const removeFavoriteStory = async (req, res) => {
   }
 
   res.status(200).json({
-    user: updatedUser,
-    story: updatedStory,
+    status: 200,
+    message: "Story removed from favorites",
+    data: {
+      user: updatedUser,
+      story: updatedStory,
+    },
   });
 };

@@ -1,3 +1,4 @@
+import { SESSION_COOKIE_OPTIONS } from "../../constants/cookiesOptions.js";
 import {
   DAY_IN_MILLISECONDS,
   MINUTE_IN_MILLISECONDS,
@@ -5,23 +6,17 @@ import {
 
 export const setSessionCookies = async (res, session) => {
   res.cookie("accessToken", session.accessToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    ...SESSION_COOKIE_OPTIONS,
     maxAge: 15 * MINUTE_IN_MILLISECONDS,
   });
 
   res.cookie("refreshToken", session.refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    ...SESSION_COOKIE_OPTIONS,
     maxAge: DAY_IN_MILLISECONDS,
   });
 
   res.cookie("sessionId", session._id, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    ...SESSION_COOKIE_OPTIONS,
     maxAge: DAY_IN_MILLISECONDS,
   });
 };

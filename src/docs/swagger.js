@@ -6,7 +6,7 @@ const options = {
     openapi: "3.0.0",
     info: {
       title: "Travel Stories API",
-      version: "1.0.0",
+      version: "1.0.2",
       description: "API documentation for the Travel Stories team project",
     },
     servers: [
@@ -20,22 +20,10 @@ const options = {
       },
     ],
     tags: [
-      {
-        name: "Auth",
-        description: "Authentication endpoints",
-      },
-      {
-        name: "Users",
-        description: "Users endpoints",
-      },
-      {
-        name: "Categories",
-        description: "Categories endpoints",
-      },
-      {
-        name: "Stories",
-        description: "Stories endpoints",
-      },
+      { name: "Auth", description: "Authentication endpoints" },
+      { name: "Users", description: "Users endpoints" },
+      { name: "Categories", description: "Categories endpoints" },
+      { name: "Stories", description: "Stories endpoints" },
     ],
   },
   apis: ["./src/docs/components/*.yaml", "./src/docs/paths/*.yaml"],
