@@ -14,11 +14,8 @@ export const addFavoriteStory = async (req, res) => {
   if (isInFavorites) {
     return res.status(200).json({
       status: 200,
-      message: "Story already in favorites",
-      data: {
-        user: req.user,
-        story,
-      },
+      message: "Bad request. Story already in favorites",
+      data: null,
     });
   }
 
