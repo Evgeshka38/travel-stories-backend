@@ -1,99 +1,217 @@
-paths:
-  /api/stories:
-    get:
-      tags:
-        - Stories
-      summary: Get all stories
-      operationId: getStories
-      description:
-        Returns a paginated list of stories with optional category filtering. Stories are sorted by publication
-        date descending with `_id` as a stable tie-breaker. A valid but non-existing category ObjectId returns 200
-        with an empty stories array.
-      parameters:
-        - name: page
-          in: query
-          required: false
-          description: Page number.
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: perPage
-          in: query
-          required: false
-          description:
-            Number of stories per API page. Keep the same perPage while traversing consecutive pages to
-            avoid gaps/duplicates.
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 20
-            default: 9
-        - name: category
-          in: query
-          required: false
-          description: Category MongoDB ObjectId. Malformed value returns 400.
-          schema:
-            $ref: "#/components/schemas/MongoObjectId"
-      responses:
-        "200":
-          description:
-            Successfully found stories. A valid page beyond the end returns 200 with an empty stories
-            array.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - message
-                  - data
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Successfully found stories!
-                  data:
-                    type: object
-                    required:
-                      - stories
-                      - page
-                      - perPage
-                      - totalItems
-                      - hasNextPage
-                      - totalPages
-                      - hasPreviousPage
-                    properties:
-                      stories:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/Story"
-                      page:
-                        type: integer
-                        minimum: 1
-                        example: 1
-                      perPage:
-                        type: integer
-                        minimum: 1
-                        example: 9
-                      totalItems:
-                        type: integer
-                        minimum: 0
-                        example: 24
-                      hasNextPage:
-                        type: boolean
-                        example: true
-                      totalPages:
-                        type: integer
-                        minimum: 0
-                        example: 3
-                      hasPreviousPage:
-                        type: boolean
-                        example: false
-              examples:
-                empty:
-                  value:
-                    status: 200
-                    message: Successfully found stories!
+/api/stories/favorite/add/{storyId}:
+  patch:
+    tags:
+      - Stories
+    summary: Add story to favorites
+    operationId: addFavoriteStory
+    security:
+      - cookieAuth: []
+    description: Adds a story to the authenticated user's favorites and increases `favoriteCount` by 1. If the story is already in favorites, returns 400 and does not change `favoriteCount`. A user cannot save their own story.
+
+    parameters:
+      - name: storyId
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/MongoObjectId"
+
+    responses:
+      "200":
+        description: Story added to favorites successfully. `favoriteCount` increased by 1.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+                - message
+                - data
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Story added to favorites
+                data:
+                  type: object
+                  required:
+                    - user
+                    - story
+                  properties:
+                    user:
+                      $ref: "#/components/schemas/User"
+                    story:
+                      $ref: "#/components/schemas/Story"
+
+      "400":
+        description: Malformed story ObjectId or story is already in favorites
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+                - message
+              properties:
+                status:
+                  type: integer
+                  example: 400
+                message:
+                  type: string
+                data:
+                  nullable: true
+            examples:
+              invalidStoryId:
+                value:
+                  status: 400
+                  message: Invalid story ID
+              alreadyInFavorites:
+                value:
+                  status: 400
+                  message: Bad request. Story already in favorites
+                  data: null
+
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              status: 401
+              message: Unauthorized
+
+      "403":
+        description: The owner cannot save their own story
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              status: 403
+              message: You cannot save your own story
+
+      "404":
+        description: Story not found
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              status: 404
+              message: Story not found
+
+      "500":
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              status: 500
+              message: Internal server error
+
+/api/stories/favorite/remove/{storyId}:
+  patch:
+    tags:
+      - Stories
+    summary: Remove story from favorites
+    operationId: removeFavoriteStory
+    security:
+      - cookieAuth: []
+    description: Removes a story from the authenticated user's favorites and decreases `favoriteCount` by 1. If the story is not in favorites, returns 404 and does not change `favoriteCount`. `favoriteCount` must not become negative.
+
+    parameters:
+      - name: storyId
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/MongoObjectId"
+
+    responses:
+      "200":
+        description: Story removed from favorites successfully. `favoriteCount` decreased by 1.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+                - message
+                - data
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Story removed from favorites
+                data:
+                  type: object
+                  required:
+                    - user
+                    - story
+                  properties:
+                    user:
+                      $ref: "#/components/schemas/User"
+                    story:
+                      $ref: "#/components/schemas/Story"
+
+      "400":
+        description: Malformed story ObjectId
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              status: 400
+              message: Invalid story ID
+
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              status: 401
+              message: Unauthorized
+
+      "404":
+        description: Story not found or story is not in favorites
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+                - message
+              properties:
+                status:
+                  type: integer
+                  example: 404
+                message:
+                  type: string
+                data:
+                  nullable: true
+            examples:
+              storyNotFound:
+                value:
+                  status: 404
+                  message: Story not found
+              notInFavorites:
+                value:
+                  status: 404
+                  message: Story is not in favorites
+                  data: null
+
+      "500":
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+            example:
+              status: 500
+              message: Internal server error
