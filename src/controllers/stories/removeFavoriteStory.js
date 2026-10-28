@@ -12,7 +12,7 @@ export const removeFavoriteStory = async (req, res) => {
   const isInFavorites = req.user.favorites.some((id) => id.equals(storyId));
 
   if (!isInFavorites) {
-    return res.status(200).json({
+    return res.status(404).json({
       status: 404,
       message: "Story is not in favorites",
       data: null,
