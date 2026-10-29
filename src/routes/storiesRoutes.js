@@ -44,9 +44,9 @@ router.get(
 );
 
 router.get(
-  "/:storyId",
+  '/:storyId',
   celebrate(storyIdSchema),
-  ctrlWrapper(storiesController.getStoryById),
+  ctrlWrapper(storiesController.getStoryById)
 );
 
 router.post(
@@ -60,6 +60,7 @@ router.post(
 router.patch(
   '/:storyId',
   authenticate,
+  upload.single('cover'),
   celebrate(updateStoryBodySchema),
   ctrlWrapper(storiesController.updateStory)
 );

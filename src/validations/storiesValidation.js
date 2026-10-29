@@ -44,12 +44,11 @@ export const updateStoryBodySchema = {
     storyId: Joi.string().pattern(objectIdPattern).required(),
   }),
   [Segments.BODY]: Joi.object({
-    img: Joi.string().uri().optional(),
     title: Joi.string().trim().min(1).max(80).optional(),
     article: Joi.string().trim().min(1).max(2500).optional(),
     category: Joi.string().pattern(objectIdPattern),
     date: Joi.string().isoDate().optional(),
-  }).min(1),
+  }),
 };
 
 export const storyIdSchema = {
