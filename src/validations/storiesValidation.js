@@ -46,8 +46,7 @@ export const updateStoryBodySchema = {
   [Segments.BODY]: Joi.object({
     title: Joi.string().trim().min(1).max(80).optional(),
     article: Joi.string().trim().min(1).max(2500).optional(),
-    category: Joi.string().pattern(objectIdPattern),
-    date: Joi.string().isoDate().optional(),
+    category: Joi.string().pattern(objectIdPattern).optional(),
   }),
 };
 

@@ -4,9 +4,9 @@ import { saveStoryCoverToCloudinary } from '../../utils/saveStoryCoverToCloudina
 
 export const updateStory = async (req, res) => {
   const { storyId } = req.params;
-  const { title, article, category, date } = req.body ?? {};
+  const { title, article, category } = req.body ?? {};
 
-  const updateData = { title, article, category, date };
+  const updateData = { title, article, category };
 
   Object.keys(updateData).forEach(key => {
     if (updateData[key] === undefined) {
