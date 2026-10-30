@@ -4,6 +4,8 @@ import { noCyrillicRegex } from "../constants/validationConstants.js";
 export const loginUserSchema = {
   [Segments.BODY]: Joi.object({
     email: Joi.string()
+      .trim()
+      .lowercase()
       .pattern(noCyrillicRegex)
       .email()
       .max(64)
