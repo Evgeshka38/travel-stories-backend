@@ -24,7 +24,7 @@ export const createStory = async (req, res) => {
 
   const story = await storiesService.createStory({
     ...req.body,
-    img: cover.secure_url,
+    img: cover.secure_url ? cover.secure_url : null,
     ownerId: req.user._id,
     date: new Date().toISOString().slice(0, 10),
   });

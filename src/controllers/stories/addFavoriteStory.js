@@ -9,6 +9,10 @@ export const addFavoriteStory = async (req, res) => {
     throw createHttpError(404, "Story not found");
   }
 
+  if (storyId === req.user._id) {
+    throw createHttpError(403, "That is your own story");
+  }
+
   const isInFavorites = req.user.favorites.some((id) => id.equals(storyId));
 
   if (isInFavorites) {
