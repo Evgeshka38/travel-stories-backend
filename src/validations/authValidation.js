@@ -11,6 +11,6 @@ export const loginUserSchema = {
       .messages({
         "string.pattern.base": "Cyrillic characters are not allowed",
       }),
-    password: Joi.string().required(),
+    password: Joi.string().min(8).max(128).required(),
   }),
 };
