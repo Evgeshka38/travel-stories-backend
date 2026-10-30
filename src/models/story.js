@@ -4,6 +4,7 @@ const storySchema = new Schema(
   {
     img: {
       type: String,
+      default: null,
       required: true,
     },
     title: {
