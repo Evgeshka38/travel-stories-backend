@@ -26,6 +26,7 @@ export const saveStoryCoverToCloudinary = async (buffer, storyId) => {
       options,
       (error, result) => {
         if (error) {
+          console.error('Cloudinary upload error:', error);
           return reject(error);
         }
         resolve(result);
