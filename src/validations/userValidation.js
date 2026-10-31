@@ -19,8 +19,25 @@ export const getAllUsersSchema = {
 
 export const registerUserSchema = {
   [Segments.BODY]: Joi.object({
-    name: Joi.string().trim().max(32).required(),
-    email: Joi.string().email().max(64).required(),
+    name: Joi.string()
+      .trim()
+      .max(32)
+      .required()
+      .pattern(/^[a-zA-Zа-яА-ЯіІїЇєЄґҐ\s'-]+$/u)
+      .message({
+        "string.pattern.base": "Name може містити лише  літери",
+      }),
+    email: Joi.string()
+      .email({ tlds: { allow: false } })
+      .pattern(/^[\x00-\x7F]+$/)
+      .message({
+        "string.pattern.base":
+          "Email може містити лише латинські символи (ASCII)",
+      })
+      .lowercase()
+      .trim()
+      .max(64)
+      .required(),
     password: Joi.string().min(8).max(128).required(),
   }),
 };
