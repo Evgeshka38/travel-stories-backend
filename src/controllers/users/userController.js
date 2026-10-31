@@ -44,8 +44,13 @@ export const updateUserAvatar = async (req, res) => {
     throw createHttpError(400, "No file");
   }
 
-  const result = await saveFileToCloudinary(file.buffer, user._id);
+  let result;
 
+  try {
+    result = await saveFileToCloudinary(file.buffer, user._id);
+  } catch (err) {
+    throw createHttpError(400, "Не вдалось обробити зображення");
+  }
   const updatedUser = await updateUserAvatarService(
     user._id,
     result.secure_url,
