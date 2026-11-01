@@ -9,7 +9,7 @@ export const errorHandler = (err, req, res, next) => {
     status = 400;
   }
   if (err instanceof multer.MulterError) {
-    status = err.code === 'LIMIT_FILE_SIZE' ? 400 : status;
+    status = 400;
   }
   if (
     typeof err.message === 'string' &&
