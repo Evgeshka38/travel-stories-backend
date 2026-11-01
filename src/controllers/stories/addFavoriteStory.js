@@ -9,7 +9,7 @@ export const addFavoriteStory = async (req, res) => {
     throw createHttpError(404, "Story not found");
   }
 
-  if (storyId === req.user._id) {
+  if (story.ownerId === req.user._id) {
     throw createHttpError(403, "That is your own story");
   }
 
