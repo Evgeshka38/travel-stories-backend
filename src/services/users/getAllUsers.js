@@ -9,6 +9,7 @@ export const getAllUsersService = async (query) => {
     User.countDocuments(),
     User.find()
       .select("name avatarUrl description articlesAmount")
+      .sort({ articlesAmount: -1, _id: -1 })
       .skip(skip)
       .limit(limit),
   ]);
