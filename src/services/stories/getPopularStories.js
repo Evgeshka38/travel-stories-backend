@@ -8,7 +8,7 @@ export const getPopularStoriesService = async (query) => {
   const [totalItems, stories] = await Promise.all([
     Story.countDocuments(),
     Story.find()
-      .sort({ favoriteCount: -1, _id: -1 })
+      .sort({ favoriteCount: -1, date: -1, _id: -1 })
       .skip(skip)
       .limit(perPage)
       .populate("category", "name")
