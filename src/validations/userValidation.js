@@ -1,4 +1,4 @@
-import { Joi, Segments } from "celebrate";
+import { Joi, Segments } from 'celebrate';
 
 export const getTravellerProfileSchema = {
   [Segments.PARAMS]: Joi.object().keys({
@@ -19,20 +19,13 @@ export const getAllUsersSchema = {
 
 export const registerUserSchema = {
   [Segments.BODY]: Joi.object({
-    name: Joi.string()
-      .trim()
-      .max(32)
-      .required()
-      .pattern(/^[a-zA-Zа-яА-ЯіІїЇєЄґҐ\s'-]+$/u)
-      .message({
-        "string.pattern.base": "Name може містити лише  літери",
-      }),
+    name: Joi.string().trim().max(32).required(),
     email: Joi.string()
       .email({ tlds: { allow: false } })
       .pattern(/^[\x00-\x7F]+$/)
       .message({
-        "string.pattern.base":
-          "Email може містити лише латинські символи (ASCII)",
+        'string.pattern.base':
+          'Email може містити лише латинські символи (ASCII)',
       })
       .lowercase()
       .trim()
