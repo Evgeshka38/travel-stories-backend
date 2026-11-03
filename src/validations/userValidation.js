@@ -39,6 +39,6 @@ export const updateUserSchema = {
   [Segments.BODY]: Joi.object({
     name: Joi.string().trim().min(1).max(32),
     email: Joi.string().email().max(64),
-    description: Joi.string().trim().max(150),
+    description: Joi.string().trim().max(150).allow(""),
   }).min(1),
 };
